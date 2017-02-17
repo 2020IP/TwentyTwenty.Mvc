@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "debugType": "portable"
+  },
+  "dependencies": {
+    "TwentyTwenty.BaseLine": "1.0.0-develop-00017",
+    "Microsoft.AspNetCore.Mvc": "1.1.1"
+  },
+  "frameworks": {
+    "netstandard1.6": { }
+  }
+}
