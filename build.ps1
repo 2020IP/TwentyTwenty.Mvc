@@ -26,15 +26,15 @@ foreach ($src in ls src/*) {
     Pop-Location
 }
 
-foreach ($test in ls test/*.Test) {
-    Push-Location $test
+# foreach ($test in ls test/*.Test) {
+#     Push-Location $test
 
-	echo "build: Testing project in $test"
+# 	echo "build: Testing project in $test"
 
-    & dotnet test -c Release
-    if($LASTEXITCODE -ne 0) { exit 3 }
+#     & dotnet test -c Release
+#     if($LASTEXITCODE -ne 0) { exit 3 }
 
-    Pop-Location
-}
+#     Pop-Location
+# }
 
 Pop-Location
