@@ -16,12 +16,14 @@ namespace TwentyTwenty.Mvc.ErrorHandling
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _env;
         private readonly Func<object, Task> _clearCacheHeadersDelegate;
+        private readonly Func<int, int> _codeMap;
 
-        public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger, IHostingEnvironment env)
+        public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger, IHostingEnvironment env, Func<int, int> codeMap)
         {
             _next = next;
             _logger = logger;
             _env = env;
+            _codeMap = codeMap;
 
             _clearCacheHeadersDelegate = ClearCacheHeaders;
         }
@@ -55,25 +57,21 @@ namespace TwentyTwenty.Mvc.ErrorHandling
                     context.Response.StatusCode = 500;
                     context.Response.OnStarting(_clearCacheHeadersDelegate, context.Response);
 
+                    var errorResponse = new ErrorResponse
+                    {
+                        RequestId = context.TraceIdentifier,
+                        ErrorMessage = ex.Message,
+                    };
+
+                    for (var ttEx = ex as TwentyTwentyException; ttEx != null; ttEx = null)
+                    {
+                        errorResponse.ErrorCode = ttEx.ErrorCode;
+                        context.Response.StatusCode = _codeMap?.Invoke(ttEx.ErrorCode) ?? 500;
+                    }
+
                     if (isAjaxRequest)
                     {
                         context.Response.ContentType = JsonContentType;
-
-                        var errorResponse = new ErrorResponse
-                        {
-                            RequestId = context.TraceIdentifier,
-                            ErrorMessage = ex.Message,
-                        };
-
-                        for (var ttEx = ex as TwentyTwentyException; ttEx != null; ttEx = null)
-                        {
-                            errorResponse.ErrorCode = ttEx.ErrorCode;
-
-                            // if (mediaEx.ErrorCode == MediaErrorCode.InvalidOperation)
-                            // {
-                            //     context.Response.StatusCode = 400;
-                            // }
-                        }
 
                         if (_env.IsDevelopment())
                         {
