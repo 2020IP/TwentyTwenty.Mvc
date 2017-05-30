@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using TwentyTwenty.Mvc;
 using TwentyTwenty.Mvc.ErrorHandling;
 using TwentyTwenty.Mvc.HealthCheck;
+using TwentyTwenty.Mvc.ReadOnlyMode;
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -25,6 +26,11 @@ namespace Microsoft.AspNetCore.Builder
             {
                 builder.UseMiddleware<HealthCheckMiddleware>();
             });
+        }
+
+        public static void UseReadOnlyMode(this IApplicationBuilder app)
+        {
+            app.UseMiddleware<ReadOnlyModeMiddleware>();
         }
     }
 }
