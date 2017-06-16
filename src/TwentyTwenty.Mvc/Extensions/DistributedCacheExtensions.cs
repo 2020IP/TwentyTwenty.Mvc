@@ -54,7 +54,7 @@ namespace Microsoft.Extensions.Caching.Distributed
             return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(bytes));
         }
 
-        public static async Task AddObjectToCollectionAsync<T>(this IDistributedCache cache, string key, T obj) where T : class
+        public static async Task AddObjectToHashSetAsync<T>(this IDistributedCache cache, string key, T obj) where T : class
         {
             var collection = await cache.GetObjectAsync<HashSet<T>>(key).ConfigureAwait(false);
 
@@ -69,7 +69,7 @@ namespace Microsoft.Extensions.Caching.Distributed
             }
         }
 
-        public static void AddObjectToCollection<T>(this IDistributedCache cache, string key, T obj) where T : class
+        public static void AddObjectToHashSet<T>(this IDistributedCache cache, string key, T obj) where T : class
         {
             var collection = cache.GetObject<HashSet<T>>(key);
 
@@ -82,6 +82,24 @@ namespace Microsoft.Extensions.Caching.Distributed
                 collection.Add(obj);
                 cache.SetObject(key, collection);
             }
+        }
+
+        public static async Task RemoveFromHashSetAsync<T>(this IDistributedCache cache, string key, T obj) where T : class
+        {
+            var collection = await cache.GetObjectAsync<HashSet<T>>(key).ConfigureAwait(false);
+
+            if (collection == null) return;
+
+            collection.Remove(obj);
+        }
+
+        public static void RemoveFromHashSet<T>(this IDistributedCache cache, string key, T obj) where T : class
+        {
+            var collection = cache.GetObject<HashSet<T>>(key);
+
+            if (collection == null) return;
+
+            collection.Remove(obj);
         }
     }
 }
