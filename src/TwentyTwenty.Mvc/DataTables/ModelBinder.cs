@@ -22,7 +22,7 @@ namespace TwentyTwenty.Mvc.DataTables
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
             BindModel(bindingContext, ParseAdditionalParameters);
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
         /// <summary>
         /// For internal and testing use only.

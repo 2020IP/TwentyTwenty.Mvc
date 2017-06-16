@@ -64,7 +64,7 @@ Task("Package")
 
         if (AppVeyor.IsRunningOnAppVeyor)
         {
-            GenerateReleaseNotes();
+            //GenerateReleaseNotes();
 
             foreach (var file in GetFiles(outputDir + "**/*"))
                 AppVeyor.UploadArtifact(file.FullPath);
