@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -21,10 +22,7 @@ namespace Microsoft.Extensions.Caching.Distributed
         {
             var bytes = await cache.GetAsync(key).ConfigureAwait(false);
 
-            if (bytes == null)
-            {
-                throw new ArgumentException("Key not found in cache");
-            }
+            if (bytes == null) return null;
 
             return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(bytes));
         }
@@ -33,12 +31,57 @@ namespace Microsoft.Extensions.Caching.Distributed
         {
             var bytes = cache.Get(key);
 
-            if (bytes == null)
-            {
-                throw new ArgumentException("Key not found in cache");
-            }
+            if (bytes == null) return null;
 
             return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(bytes));
+        }
+
+        public static async Task<object> GetObjectAsync(this IDistributedCache cache, string key)
+        {
+            var bytes = await cache.GetAsync(key).ConfigureAwait(false);
+
+            if (bytes == null) return null;
+
+            return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(bytes));
+        }
+
+        public static object GetObject(this IDistributedCache cache, string key)
+        {
+            var bytes = cache.Get(key);
+
+            if (bytes == null) return null;
+
+            return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(bytes));
+        }
+
+        public static async Task AddObjectToCollectionAsync<T>(this IDistributedCache cache, string key, T obj) where T : class
+        {
+            var collection = await cache.GetObjectAsync<HashSet<T>>(key).ConfigureAwait(false);
+
+            if (collection == null)
+            {
+                await cache.SetObjectAsync(key, new HashSet<T> { obj }).ConfigureAwait(false);
+            }
+            else
+            {
+                collection.Add(obj);
+                await cache.SetObjectAsync(key, collection).ConfigureAwait(false);
+            }
+        }
+
+        public static void AddObjectToCollection<T>(this IDistributedCache cache, string key, T obj) where T : class
+        {
+            var collection = cache.GetObject<HashSet<T>>(key);
+
+            if (collection == null)
+            {
+                cache.SetObject(key, new HashSet<T> { obj });
+            }
+            else
+            {
+                collection.Add(obj);
+                cache.SetObject(key, collection);
+            }
         }
     }
 }
