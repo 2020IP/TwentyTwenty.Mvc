@@ -4,6 +4,7 @@ using TwentyTwenty.Mvc;
 using TwentyTwenty.Mvc.ErrorHandling;
 using TwentyTwenty.Mvc.HealthCheck;
 using TwentyTwenty.Mvc.ReadOnlyMode;
+using TwentyTwenty.Mvc.Version;
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -31,6 +32,11 @@ namespace Microsoft.AspNetCore.Builder
         public static void UseReadOnlyMode(this IApplicationBuilder app)
         {
             app.UseMiddleware<ReadOnlyModeMiddleware>();
+        }
+
+        public static void UseVersionHeader(this IApplicationBuilder app, string headerName = "api-version")
+        {
+            app.UseMiddleware<VersionHeaderMiddleware>(headerName);
         }
     }
 }
