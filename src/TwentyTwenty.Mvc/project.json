@@ -15,7 +15,7 @@
     "debugType": "portable"
   },
   "dependencies": {
-    "TwentyTwenty.BaseLine": "0.5.0",
+    "TwentyTwenty.BaseLine": "0.5.2",
     "Microsoft.AspNetCore.Mvc": "1.1.3"
   },
   "frameworks": {
