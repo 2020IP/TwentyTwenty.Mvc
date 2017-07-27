@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class VersionServiceExtensions
     {
-        public static IServiceCollection AddVersionPrivider(this IServiceCollection services)
+        public static IServiceCollection AddVersionProvider(this IServiceCollection services)
         {
             services.AddSingleton<IVersionProvider, VersionProvider>();
 
