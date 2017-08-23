@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class DataTablesServiceExtensions
     {
-        public static void AddDataTables(this IServiceCollection services, 
+        public static IServiceCollection AddDataTables(this IServiceCollection services, 
             Func<ModelBindingContext, IDictionary<string, object>> parseRequestAdditionalParameters = null)
         {
             var modelBinder = new ModelBinder
@@ -24,9 +24,11 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 options.ModelBinderProviders.Insert(0, new ModelBinderProvider(modelBinder));
             });
+
+            return services;
         }
 
-        public static void AddDataTables(this IServiceCollection services, Action<DataTablesOptions> setupAction, 
+        public static IServiceCollection AddDataTables(this IServiceCollection services, Action<DataTablesOptions> setupAction, 
             Func<ModelBindingContext, IDictionary<string, object>> parseRequestAdditionalParameters)
         {
             if (setupAction == null)
@@ -37,6 +39,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddDataTables(parseRequestAdditionalParameters);
             
             services.Configure(setupAction);
+
+            return services;
         }
 
 

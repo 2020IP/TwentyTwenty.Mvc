@@ -115,7 +115,7 @@ namespace TwentyTwenty.Mvc.ErrorHandling
             response.Headers[HeaderNames.Pragma] = "no-cache";
             response.Headers[HeaderNames.Expires] = "-1";
             response.Headers.Remove(HeaderNames.ETag);
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
     }
 }

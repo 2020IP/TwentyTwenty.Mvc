@@ -1,7 +1,8 @@
 using System;
 using Microsoft.AspNetCore.Http;
+using TwentyTwenty.BaseLine;
 
-namespace TwentyTwenty.BaseLine
+namespace TwentyTwenty.Mvc
 {
     public static class HttpRequestExtensions
     {

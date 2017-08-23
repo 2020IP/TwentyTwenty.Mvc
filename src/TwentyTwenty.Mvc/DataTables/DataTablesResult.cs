@@ -47,7 +47,7 @@ namespace TwentyTwenty.Mvc.DataTables
         public override Task ExecuteResultAsync(ActionContext context)
         {
             ExecuteResult(context);
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
         public override void ExecuteResult(ActionContext context)
