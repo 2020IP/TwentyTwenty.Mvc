@@ -1,9 +1,9 @@
-#tool "nuget:?package=GitReleaseNotes"
 #tool "nuget:?package=GitVersion.CommandLine"
 
+GitVersion versionInfo = null;
 var target = Argument("target", "Default");
 var outputDir = "./artifacts/";
-var mvcProjectJson = "./src/TwentyTwenty.Mvc/project.json";
+var configuration   = Argument("configuration", "Release");
 
 Task("Clean")
     .Does(() => {
@@ -14,12 +14,6 @@ Task("Clean")
         CreateDirectory(outputDir);
     });
 
-Task("Restore")
-    .Does(() => {
-        DotNetCoreRestore("src");
-    });
-
-GitVersion versionInfo = null;
 Task("Version")
     .Does(() => {
         GitVersion(new GitVersionSettings{
@@ -27,34 +21,44 @@ Task("Version")
             OutputType = GitVersionOutput.BuildServer
         });
         versionInfo = GitVersion(new GitVersionSettings{ OutputType = GitVersionOutput.Json });
+    });
 
-        // Update project.json
-        var updatedProjectJson = System.IO.File.ReadAllText(mvcProjectJson)
-            .Replace("1.0.0-*", versionInfo.NuGetVersion);
-
-        System.IO.File.WriteAllText(mvcProjectJson, updatedProjectJson);
+Task("Restore")
+    .IsDependentOn("Version")
+    .Does(() => {        
+        // Workaround for bad tooling.  See https://github.com/NuGet/Home/issues/4337
+        var props = "-p:VersionPrefix=" + versionInfo.MajorMinorPatch + " -p:VersionSuffix=" + versionInfo.PreReleaseLabel + versionInfo.PreReleaseNumber;
+        DotNetCoreRestore(new DotNetCoreRestoreSettings
+        {
+            ArgumentCustomization = args => args.Append(props)
+        });
     });
 
 Task("Build")
     .IsDependentOn("Clean")
-    .IsDependentOn("Version")
     .IsDependentOn("Restore")
     .Does(() => {
-        DotNetCoreBuild(mvcProjectJson);
+        DotNetCoreBuild(".", new DotNetCoreBuildSettings
+        {
+            Configuration = configuration,
+            VersionSuffix = versionInfo.PreReleaseLabel + versionInfo.PreReleaseNumber,
+            ArgumentCustomization = args => args.Append("-p:VersionPrefix=" + versionInfo.MajorMinorPatch),
+        });
     });
 
 Task("Package")
     .IsDependentOn("Build")
     .Does(() => {
-        //GitLink("./", new GitLinkSettings { ArgumentCustomization = args => args.Append("-include Specify,Specify.Autofac") });
-
         var settings = new DotNetCorePackSettings
         {
             OutputDirectory = outputDir,
-            NoBuild = true
+            NoBuild = true,
+            Configuration = configuration,
+            VersionSuffix = versionInfo.PreReleaseLabel + versionInfo.PreReleaseNumber,
+            ArgumentCustomization = args => args.Append("-p:VersionPrefix=" + versionInfo.MajorMinorPatch),
         };
 
-        DotNetCorePack(mvcProjectJson, settings);
+        DotNetCorePack("src/TwentyTwenty.Mvc/", settings);
 
         System.IO.File.WriteAllLines(outputDir + "artifacts", new[]{
             "nuget:TwentyTwenty.Mvc." + versionInfo.NuGetVersion + ".nupkg",
@@ -64,8 +68,6 @@ Task("Package")
 
         if (AppVeyor.IsRunningOnAppVeyor)
         {
-            GenerateReleaseNotes();
-
             foreach (var file in GetFiles(outputDir + "**/*"))
                 AppVeyor.UploadArtifact(file.FullPath);
         }

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyTitle>20|20 MVC</AssemblyTitle>
+    <Authors>2020IP</Authors>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <DebugType>portable</DebugType>
+    <AssemblyName>TwentyTwenty.Mvc</AssemblyName>
+    <PackageId>TwentyTwenty.Mvc</PackageId>
+    <PackageIconUrl>https://avatars3.githubusercontent.com/u/15891935?v=3&amp;s=64</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/2020IP/TwentyTwenty.Mvc</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/2020IP/TwentyTwenty.Mvc/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>git://github.com/2020IP/TwentyTwenty.Mvc</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TwentyTwenty.BaseLine" Version="0.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
+  </ItemGroup>
+
+</Project>
