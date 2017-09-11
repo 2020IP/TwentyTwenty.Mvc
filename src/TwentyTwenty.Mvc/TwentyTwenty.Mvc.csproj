@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyTitle>20|20 MVC</AssemblyTitle>
     <Authors>2020IP</Authors>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>TwentyTwenty.Mvc</AssemblyName>
     <PackageId>TwentyTwenty.Mvc</PackageId>

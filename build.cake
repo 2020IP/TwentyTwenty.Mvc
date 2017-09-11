@@ -25,7 +25,7 @@ Task("Version")
 
 Task("Restore")
     .IsDependentOn("Version")
-    .Does(() => {        
+    .Does(() => {
         // Workaround for bad tooling.  See https://github.com/NuGet/Home/issues/4337
         var props = "-p:VersionPrefix=" + versionInfo.MajorMinorPatch + " -p:VersionSuffix=" + versionInfo.PreReleaseLabel + versionInfo.PreReleaseNumber;
         DotNetCoreRestore(new DotNetCoreRestoreSettings
