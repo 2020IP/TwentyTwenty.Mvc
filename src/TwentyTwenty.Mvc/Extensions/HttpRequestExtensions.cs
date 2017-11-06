@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using TwentyTwenty.BaseLine;
 
@@ -35,6 +36,33 @@ namespace TwentyTwenty.Mvc
                 return new SortSpec(sortSeg[0], sortDirection);
             }
             return null;
+        }
+
+        public static List<SortSpec> GetSortSpecs(this HttpRequest request)
+        {
+            var sorts = request.Query.GetValues("sort");
+
+            if (!sorts.HasValue) return null;
+
+            var specs = new List<SortSpec>();
+            foreach (var sort in sorts)
+            {
+                var sortSeg = sort?.Split('-', ' ');
+
+                if (sortSeg != null && sortSeg.Length > 0)
+                {
+                    var sortDirection = ListSortDirection.Ascending;
+
+                    if (sortSeg.Length > 1 && string.Equals(sortSeg[1], "desc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        sortDirection = ListSortDirection.Descending;
+                    }
+
+                    specs.Add(new SortSpec(sortSeg[0], sortDirection));
+                }
+            }
+
+            return specs;
         }
     }
 }
