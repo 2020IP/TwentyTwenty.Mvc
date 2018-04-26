@@ -14,6 +14,10 @@
     <RepositoryUrl>git://github.com/2020IP/TwentyTwenty.Mvc</RepositoryUrl>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DefineConstants>NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="TwentyTwenty.BaseLine" Version="0.5.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
