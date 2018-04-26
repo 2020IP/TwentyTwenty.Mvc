@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyTitle>20|20 MVC</AssemblyTitle>
     <Authors>Jarrod Alexander, Eric Green</Authors>
-    <TargetFrameworks>netstandard2.0;</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net451</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>TwentyTwenty.Mvc</AssemblyName>
     <PackageId>TwentyTwenty.Mvc</PackageId>
@@ -16,9 +16,6 @@
 
   <ItemGroup>
     <PackageReference Include="TwentyTwenty.BaseLine" Version="0.5.3" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.3" />
   </ItemGroup>
 
