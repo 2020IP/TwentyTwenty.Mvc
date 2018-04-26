@@ -85,7 +85,12 @@ namespace TwentyTwenty.Mvc
 
             public Task ExecuteAsync(ActionContext context, FileCallbackResult result)
             {
-                SetHeadersAndLog(context, result);
+                #if NETSTANDARD2_0
+                    SetHeadersAndLog(context, result, null);
+                #else
+                    SetHeadersAndLog(context, result);
+                #endif
+                
                 return result.Callback(context.HttpContext.Response.Body, context);
             }
         }
