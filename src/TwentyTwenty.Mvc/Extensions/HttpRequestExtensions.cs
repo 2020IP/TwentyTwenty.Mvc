@@ -10,12 +10,14 @@ namespace TwentyTwenty.Mvc
         public static int GetPage(this HttpRequest request)
         {
             var page = request.Query.GetInt("page");
-            return page.HasValue ? page.Value : 1;
+            return page.HasValue ? Math.Max(page.Value, 1) : 1;
         }
 
         public static int GetPageSize(this HttpRequest request)
         {
             var perPage = request.Query.GetInt("pageSize");
+            perPage = perPage == 0 ? 100 : perPage;
+
             return perPage.HasValue ? perPage.Value : 100;
         }
 
