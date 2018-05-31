@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -85,11 +85,7 @@ namespace TwentyTwenty.Mvc
 
             public Task ExecuteAsync(ActionContext context, FileCallbackResult result)
             {
-                #if NETSTANDARD2_0
-                    SetHeadersAndLog(context, result, null);
-                #else
-                    SetHeadersAndLog(context, result);
-                #endif
+                SetHeadersAndLog(context, result, null, result.EnableRangeProcessing);
 
                 return result.Callback(context.HttpContext.Response.Body, context);
             }
