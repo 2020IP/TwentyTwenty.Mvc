@@ -1,5 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace TwentyTwenty.Mvc.Version
 {
@@ -7,23 +9,32 @@ namespace TwentyTwenty.Mvc.Version
     {
         private readonly RequestDelegate _next;
         private readonly IVersionProvider _versionProvider;
-        private readonly string _headerName;
+        private readonly VersionOptions _options;
 
-        public VersionHeaderMiddleware(RequestDelegate next, IVersionProvider versionProvider, string headerName)
+        public VersionHeaderMiddleware(RequestDelegate next, IVersionProvider versionProvider, IOptions<VersionOptions> options)
         {
-            _next = next;
-            _versionProvider = versionProvider;
-            _headerName = headerName;
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            _next = next ?? throw new ArgumentNullException(nameof(next));
+            _versionProvider = versionProvider ?? throw new ArgumentNullException(nameof(versionProvider));
+
+            _options = options.Value;
         }
 
-        public async Task Invoke(HttpContext context)
+        public Task Invoke(HttpContext context)
         {
-            var headerName = string.IsNullOrWhiteSpace(_headerName) ? "api-version" : _headerName;
             var version = _versionProvider.GetVersion();
 
-            await _next(context);
+            context.Response.OnStarting(() =>
+            {
+                context.Response.Headers.Add(_options.Header, new[] { version });
+                return Task.CompletedTask;
+            });
 
-            context.Response.Headers.Add(headerName, version);
+            return _next(context);
         }
     }
 }

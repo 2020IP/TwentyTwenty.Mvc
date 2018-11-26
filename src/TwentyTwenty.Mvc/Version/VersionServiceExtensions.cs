@@ -8,9 +8,6 @@ using TwentyTwenty.Mvc.Version;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    /// <summary>
-    /// Handles DataTables.AspNet registration and holds default (global) configuration options.
-    /// </summary>
     public static class VersionServiceExtensions
     {
         public static IServiceCollection AddVersionProvider(this IServiceCollection services)
