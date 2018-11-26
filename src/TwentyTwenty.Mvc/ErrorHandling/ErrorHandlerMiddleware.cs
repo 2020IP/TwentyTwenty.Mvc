@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using TwentyTwenty.BaseLine;
@@ -16,14 +17,19 @@ namespace TwentyTwenty.Mvc.ErrorHandling
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _env;
         private readonly Func<object, Task> _clearCacheHeadersDelegate;
-        private readonly Func<int, int> _codeMap;
+        private readonly ErrorHandlerOptions _options;
 
-        public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger, IHostingEnvironment env, Func<int, int> codeMap)
+        public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger, IHostingEnvironment env, IOptions<ErrorHandlerOptions> options)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             _next = next;
             _logger = logger;
             _env = env;
-            _codeMap = codeMap;
+            _options = options.Value;
 
             _clearCacheHeadersDelegate = ClearCacheHeaders;
         }
@@ -44,7 +50,7 @@ namespace TwentyTwenty.Mvc.ErrorHandling
                 await _next(context);
             }
             catch (Exception ex)
-            {                
+            {
                 _logger.LogError(0, ex, "An unhandled exception has occurred: " + ex.Message);
                 // We can't do anything if the response has already started, just abort.
                 if (context.Response.HasStarted)
@@ -66,10 +72,10 @@ namespace TwentyTwenty.Mvc.ErrorHandling
                     for (var ttEx = ex as TwentyTwentyException; ttEx != null; ttEx = null)
                     {
                         errorResponse.ErrorCode = ttEx.ErrorCode;
-                        context.Response.StatusCode = _codeMap?.Invoke(ttEx.ErrorCode) ?? 500;
+                        context.Response.StatusCode = _options.CodeMap?.Invoke(ttEx.ErrorCode) ?? 500;
                     }
 
-                    if (isAjaxRequest)
+                    if (!_options.UseHtmlPage || isAjaxRequest)
                     {
                         context.Response.ContentType = JsonContentType;
 
@@ -82,7 +88,7 @@ namespace TwentyTwenty.Mvc.ErrorHandling
                         await context.Response.WriteAsync(json);
                     }
                     else
-                    {                        
+                    {
                         // TODO: Html error page.
                         await context.Response.WriteAsync("Error.");
                     }
