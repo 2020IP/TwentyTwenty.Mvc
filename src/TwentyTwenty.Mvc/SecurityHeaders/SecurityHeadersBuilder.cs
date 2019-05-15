@@ -15,9 +15,7 @@ namespace TwentyTwenty.Mvc.SecurityHeaders
             AddFrameOptionsDeny();
             AddXssProtectionBlock();
             AddContentTypeOptionsNoSniff();
-            AddStrictTransportSecurityMaxAge();
             RemoveServerHeader();
-
             return this;
         }
 
@@ -90,38 +88,6 @@ namespace TwentyTwenty.Mvc.SecurityHeaders
         {
             _policy.SetHeaders[XssProtectionConstants.Header] =
                 string.Format(XssProtectionConstants.Report, reportUrl);
-            return this;
-        }
-        /// <summary>
-        /// Add Strict-Transport-Security max-age=<see cref="maxAge"/> to all requests.
-        /// Tells the user-agent to cache the domain in the STS list for the number of seconds provided.
-        /// </summary>
-        public SecurityHeadersBuilder AddStrictTransportSecurityMaxAge(int maxAge = OneYearInSeconds)
-        {
-            _policy.SetHeaders[StrictTransportSecurityConstants.Header] =
-                string.Format(StrictTransportSecurityConstants.MaxAge, maxAge);
-            return this;
-        }
-
-        /// <summary>
-        /// Add Strict-Transport-Security max-age=<see cref="maxAge"/>; includeSubDomains to all requests.
-        /// Tells the user-agent to cache the domain in the STS list for the number of seconds provided and include any sub-domains.
-        /// </summary>
-        public SecurityHeadersBuilder AddStrictTransportSecurityMaxAgeIncludeSubDomains(int maxAge = OneYearInSeconds)
-        {
-            _policy.SetHeaders[StrictTransportSecurityConstants.Header] =
-                string.Format(StrictTransportSecurityConstants.MaxAgeIncludeSubdomains, maxAge);
-            return this;
-        }
-
-        /// <summary>
-        /// Add Strict-Transport-Security max-age=0 to all requests.
-        /// Tells the user-agent to remove, or not cache the host in the STS cache
-        /// </summary>
-        public SecurityHeadersBuilder AddStrictTransportSecurityNoCache()
-        {
-            _policy.SetHeaders[StrictTransportSecurityConstants.Header] =
-                StrictTransportSecurityConstants.NoCache;
             return this;
         }
 

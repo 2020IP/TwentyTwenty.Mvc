@@ -2,7 +2,7 @@ namespace TwentyTwenty.Mvc.Correlation
 {
     public class CorrelationIdOptions
     {
-        private const string DefaultHeader = "x-correlation-id";
+        private const string DefaultHeader = "X-Correlation-Id";
 
         /// <summary>
         /// The header field name where the correlation ID will be stored

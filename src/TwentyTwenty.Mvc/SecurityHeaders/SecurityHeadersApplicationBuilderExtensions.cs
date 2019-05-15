@@ -5,7 +5,7 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class SecurityHeadersApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseSecurityHeadersMiddleware(this IApplicationBuilder app, SecurityHeadersBuilder builder)
+        public static IApplicationBuilder UseSecurityHeaders(this IApplicationBuilder app, SecurityHeadersBuilder builder)
         {
             if (app == null)
             {
@@ -20,7 +20,7 @@ namespace Microsoft.AspNetCore.Builder
             return app.UseMiddleware<SecurityHeadersMiddleware>(builder.Build());
         }
 
-        public static IApplicationBuilder UseSecurityHeadersMiddleware(this IApplicationBuilder app, Action<SecurityHeadersBuilder> builderAction)
+        public static IApplicationBuilder UseSecurityHeaders(this IApplicationBuilder app, Action<SecurityHeadersBuilder> builderAction)
         {
             if (app == null)
             {
