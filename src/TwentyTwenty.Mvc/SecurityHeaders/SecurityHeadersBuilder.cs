@@ -5,10 +5,6 @@ namespace TwentyTwenty.Mvc.SecurityHeaders
     public class SecurityHeadersBuilder
     {
         private readonly SecurityHeadersPolicy _policy = new SecurityHeadersPolicy();
-        /// <summary>
-        /// The number of seconds in one year
-        /// </summary>
-        public const int OneYearInSeconds = 60 * 60 * 24 * 365;
 
         public SecurityHeadersBuilder AddDefaultSecurePolicy()
         {
@@ -98,6 +94,79 @@ namespace TwentyTwenty.Mvc.SecurityHeaders
         public SecurityHeadersBuilder AddContentTypeOptionsNoSniff()
         {
             _policy.SetHeaders[ContentTypeOptionsConstants.Header] = ContentTypeOptionsConstants.NoSniff;
+            return this;
+        }
+
+        /// <summary>
+        /// The Referer header will be omitted entirely. No referrer information is sent along with requests.
+        /// </summary>
+        public SecurityHeadersBuilder AddReferrerPolicyNoReferrer()
+        {
+            _policy.SetHeaders[ReferrerPolicyConstants.Header] = ReferrerPolicyConstants.NoReferrer;
+            return this;
+        }
+
+        /// <summary>
+        /// (default) This is the user agent's default behavior if no policy is specified. The URL is sent as a referrer when the protocol security level stays the same (HTTP→HTTP, HTTPS→HTTPS), but isn't sent to a less secure destination (HTTPS→HTTP).
+        /// </summary>
+        public SecurityHeadersBuilder AddReferrerPolicyNoReferrerWhenDowngrade()
+        {
+            _policy.SetHeaders[ReferrerPolicyConstants.Header] = ReferrerPolicyConstants.NoReferrerWhenDowngrade;
+            return this;
+        }
+
+        /// <summary>
+        /// Only send the origin of the document as the referrer in all cases.
+        /// The document https://example.com/page.html will send the referrer https://example.com/.
+        /// </summary>
+        public SecurityHeadersBuilder AddReferrerPolicyOrigin()
+        {
+            _policy.SetHeaders[ReferrerPolicyConstants.Header] = ReferrerPolicyConstants.Origin;
+            return this;
+        }
+
+        /// <summary>
+        /// Send a full URL when performing a same-origin request, but only send the origin of the document for other cases.
+        /// </summary>
+        public SecurityHeadersBuilder AddReferrerPolicyOriginWhenCrossOrigin()
+        {
+            _policy.SetHeaders[ReferrerPolicyConstants.Header] = ReferrerPolicyConstants.OriginWhenCrossOrigin;
+            return this;
+        }
+
+        /// <summary>
+        /// A referrer will be sent for same-site origins, but cross-origin requests will contain no referrer information.
+        /// </summary>
+        public SecurityHeadersBuilder AddReferrerPolicySameOrigin()
+        {
+            _policy.SetHeaders[ReferrerPolicyConstants.Header] = ReferrerPolicyConstants.SameOrigin;
+            return this;
+        }
+
+        /// <summary>
+        /// Only send the origin of the document as the referrer when the protocol security level stays the same (HTTPS→HTTPS), but don't send it to a less secure destination (HTTPS→HTTP).
+        /// </summary>
+        public SecurityHeadersBuilder AddReferrerPolicyStrictOrigin()
+        {
+            _policy.SetHeaders[ReferrerPolicyConstants.Header] = ReferrerPolicyConstants.StrictOrigin;
+            return this;
+        }
+
+        /// <summary>
+        /// Send a full URL when performing a same-origin request, only send the origin when the protocol security level stays the same (HTTPS→HTTPS), and send no header to a less secure destination (HTTPS→HTTP).
+        /// </summary>
+        public SecurityHeadersBuilder AddReferrerPolicyStrictOriginWhenCrossOrigin()
+        {
+            _policy.SetHeaders[ReferrerPolicyConstants.Header] = ReferrerPolicyConstants.StrictOriginWhenCrossOrigin;
+            return this;
+        }
+
+        /// <summary>
+        /// Send a full URL when performing a same-origin or cross-origin request.
+        /// </summary>
+        public SecurityHeadersBuilder AddReferrerPolicyUnsafeUrl()
+        {
+            _policy.SetHeaders[ReferrerPolicyConstants.Header] = ReferrerPolicyConstants.UnsafeUrl;
             return this;
         }
 
