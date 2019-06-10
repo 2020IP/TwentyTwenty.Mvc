@@ -63,11 +63,7 @@ namespace TwentyTwenty.Mvc.ErrorHandling
                     context.Response.StatusCode = 500;
                     context.Response.OnStarting(_clearCacheHeadersDelegate, context.Response);
 
-                    var errorResponse = new ErrorResponse
-                    {
-                        RequestId = context.TraceIdentifier,
-                        ErrorMessage = ex.Message,
-                    };
+                    var errorResponse = new ErrorResponse(context.TraceIdentifier, ex.Message);
 
                     for (var ttEx = ex as TwentyTwentyException; ttEx != null; ttEx = null)
                     {
