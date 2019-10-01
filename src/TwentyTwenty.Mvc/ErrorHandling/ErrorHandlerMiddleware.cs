@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
@@ -15,11 +16,11 @@ namespace TwentyTwenty.Mvc.ErrorHandling
         private const string JsonContentType = "application/json";
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
-        private readonly IHostingEnvironment _env;
+        private readonly IHostEnvironment _env;
         private readonly Func<object, Task> _clearCacheHeadersDelegate;
         private readonly ErrorHandlerOptions _options;
 
-        public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger, IHostingEnvironment env, IOptions<ErrorHandlerOptions> options)
+        public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger, IHostEnvironment env, IOptions<ErrorHandlerOptions> options)
         {
             if (options == null)
             {

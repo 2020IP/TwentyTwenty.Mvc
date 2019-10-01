@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyTitle>20|20 MVC</AssemblyTitle>
     <Authors>Jarrod Alexander, Eric Green</Authors>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>TwentyTwenty.Mvc</AssemblyName>
     <PackageId>TwentyTwenty.Mvc</PackageId>
@@ -15,9 +15,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TwentyTwenty.BaseLine" Version="0.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.1.0" />
+    <PackageReference Include="TwentyTwenty.BaseLine" Version="1.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>
