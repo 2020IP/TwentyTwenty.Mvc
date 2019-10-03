@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -51,37 +52,30 @@ namespace TwentyTwenty.Mvc.DataTables
             response.ContentType = "application/json";
             response.StatusCode = (int)HttpStatusCode.OK;
 
-            using (var writer = new HttpResponseStreamWriter(response.Body, Encoding.UTF8))
-            using (var jsonWriter = new JsonTextWriter(writer))
+            await using (var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter, new JsonWriterOptions { Indented = true }))
             {
-                jsonWriter.CloseOutput = false;
-
                 // Start json object.
-                await jsonWriter.WriteStartObjectAsync();
+                jsonWriter.WriteStartObject();
 
                 // Draw
-                await jsonWriter.WritePropertyNameAsync(ResponseNames.Draw, true);
-                await jsonWriter.WriteValueAsync(Draw);
+                jsonWriter.WriteNumber(ResponseNames.Draw, Draw);
 
                 if (IsSuccessResponse())
                 {
                     // TotalRecords
-                    await jsonWriter.WritePropertyNameAsync(ResponseNames.TotalRecords, true);
-                    await jsonWriter.WriteValueAsync(TotalRecords);
+                    jsonWriter.WriteNumber(ResponseNames.TotalRecords, TotalRecords);
 
                     // TotalRecordsFiltered
-                    await jsonWriter.WritePropertyNameAsync(ResponseNames.TotalRecordsFiltered, true);
-                    await jsonWriter.WriteValueAsync(TotalRecordsFiltered);
+                    jsonWriter.WriteNumber(ResponseNames.TotalRecordsFiltered, TotalRecordsFiltered);
 
                     // Data
-                    await jsonWriter.WritePropertyNameAsync(ResponseNames.Data, true);
-                    SerializeData(jsonWriter, Data);
+                    jsonWriter.WritePropertyName(ResponseNames.Data);
+                    System.Text.Json.JsonSerializer.Serialize(jsonWriter, Data, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
                 }
                 else
                 {
                     // Error
-                    await jsonWriter.WritePropertyNameAsync(ResponseNames.Error, true);
-                    await jsonWriter.WriteValueAsync(Error);
+                    jsonWriter.WriteString(ResponseNames.Error, Error);
                 }
 
                 // AdditionalParameters
@@ -89,13 +83,13 @@ namespace TwentyTwenty.Mvc.DataTables
                 {
                     foreach(var keypair in AdditionalParameters)
                     {
-                        await jsonWriter.WritePropertyNameAsync(keypair.Key, true);
-                        await jsonWriter.WriteValueAsync(keypair.Value);
+                        jsonWriter.WritePropertyName(keypair.Key);
+                        System.Text.Json.JsonSerializer.Serialize(jsonWriter, keypair.Value, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
                     }
                 }
 
                 // End json object
-                await jsonWriter.WriteEndObjectAsync();
+                jsonWriter.WriteEndObject();
 
                 await jsonWriter.FlushAsync();
             }
@@ -184,7 +178,8 @@ namespace TwentyTwenty.Mvc.DataTables
                 ContractResolver = new CamelCasePropertyNamesContractResolver() 
             };
 
-            var serializer = JsonSerializer.Create(settings);
+            var serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
+            
             
             serializer.Serialize(writer, data);
         }
