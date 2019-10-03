@@ -43,10 +43,62 @@ namespace TwentyTwenty.Mvc.DataTables
         /// </summary>
         public IDictionary<string, object> AdditionalParameters { get; protected set; }
         
-        public override Task ExecuteResultAsync(ActionContext context)
+        public override async Task ExecuteResultAsync(ActionContext context)
         {
-            ExecuteResult(context);
-            return Task.FromResult(true);
+            var options = context.HttpContext.RequestServices.GetRequiredService<IOptions<DataTablesOptions>>();
+
+            var response = context.HttpContext.Response;
+            response.ContentType = "application/json";
+            response.StatusCode = (int)HttpStatusCode.OK;
+
+            using (var writer = new HttpResponseStreamWriter(response.Body, Encoding.UTF8))
+            using (var jsonWriter = new JsonTextWriter(writer))
+            {
+                jsonWriter.CloseOutput = false;
+
+                // Start json object.
+                await jsonWriter.WriteStartObjectAsync();
+
+                // Draw
+                await jsonWriter.WritePropertyNameAsync(ResponseNames.Draw, true);
+                await jsonWriter.WriteValueAsync(Draw);
+
+                if (IsSuccessResponse())
+                {
+                    // TotalRecords
+                    await jsonWriter.WritePropertyNameAsync(ResponseNames.TotalRecords, true);
+                    await jsonWriter.WriteValueAsync(TotalRecords);
+
+                    // TotalRecordsFiltered
+                    await jsonWriter.WritePropertyNameAsync(ResponseNames.TotalRecordsFiltered, true);
+                    await jsonWriter.WriteValueAsync(TotalRecordsFiltered);
+
+                    // Data
+                    await jsonWriter.WritePropertyNameAsync(ResponseNames.Data, true);
+                    SerializeData(jsonWriter, Data);
+                }
+                else
+                {
+                    // Error
+                    await jsonWriter.WritePropertyNameAsync(ResponseNames.Error, true);
+                    await jsonWriter.WriteValueAsync(Error);
+                }
+
+                // AdditionalParameters
+                if (options.Value.IsResponseAdditionalParametersEnabled && AdditionalParameters != null)
+                {
+                    foreach(var keypair in AdditionalParameters)
+                    {
+                        await jsonWriter.WritePropertyNameAsync(keypair.Key, true);
+                        await jsonWriter.WriteValueAsync(keypair.Value);
+                    }
+                }
+
+                // End json object
+                await jsonWriter.WriteEndObjectAsync();
+
+                await jsonWriter.FlushAsync();
+            }
         }
 
         public override void ExecuteResult(ActionContext context)
