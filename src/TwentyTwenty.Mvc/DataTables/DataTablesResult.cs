@@ -39,6 +39,8 @@ namespace TwentyTwenty.Mvc.DataTables
         /// Gets aditional parameters for response.
         /// </summary>
         public IDictionary<string, object> AdditionalParameters { get; protected set; }
+
+        private JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         
         public override async Task ExecuteResultAsync(ActionContext context)
         {
@@ -48,7 +50,7 @@ namespace TwentyTwenty.Mvc.DataTables
             response.ContentType = "application/json";
             response.StatusCode = (int)HttpStatusCode.OK;
 
-            await using (var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter, new JsonWriterOptions { Indented = true }))
+            await using (var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter))
             {
                 // Start json object.
                 jsonWriter.WriteStartObject();
@@ -66,7 +68,7 @@ namespace TwentyTwenty.Mvc.DataTables
 
                     // Data
                     jsonWriter.WritePropertyName(ResponseNames.Data);
-                    System.Text.Json.JsonSerializer.Serialize(jsonWriter, Data, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                    JsonSerializer.Serialize(jsonWriter, Data, _jsonOptions);
                 }
                 else
                 {
@@ -80,7 +82,7 @@ namespace TwentyTwenty.Mvc.DataTables
                     foreach(var keypair in AdditionalParameters)
                     {
                         jsonWriter.WritePropertyName(keypair.Key);
-                        System.Text.Json.JsonSerializer.Serialize(jsonWriter, keypair.Value, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                        JsonSerializer.Serialize(jsonWriter, keypair.Value, _jsonOptions);
                     }
                 }
 
@@ -99,7 +101,7 @@ namespace TwentyTwenty.Mvc.DataTables
             response.ContentType = "application/json";
             response.StatusCode = (int)HttpStatusCode.OK;
 
-            using (var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter, new JsonWriterOptions { Indented = true }))
+            using (var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter))
             {
                 // Start json object.
                 jsonWriter.WriteStartObject();
@@ -117,7 +119,7 @@ namespace TwentyTwenty.Mvc.DataTables
 
                     // Data
                     jsonWriter.WritePropertyName(ResponseNames.Data);
-                    System.Text.Json.JsonSerializer.Serialize(jsonWriter, Data, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                    JsonSerializer.Serialize(jsonWriter, Data, _jsonOptions);
                 }
                 else
                 {
@@ -131,7 +133,7 @@ namespace TwentyTwenty.Mvc.DataTables
                     foreach(var keypair in AdditionalParameters)
                     {
                         jsonWriter.WritePropertyName(keypair.Key);
-                        System.Text.Json.JsonSerializer.Serialize(jsonWriter, keypair.Value, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                        JsonSerializer.Serialize(jsonWriter, keypair.Value, _jsonOptions);
                     }
                 }
 
