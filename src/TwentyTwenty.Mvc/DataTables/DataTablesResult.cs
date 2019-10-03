@@ -1,14 +1,10 @@
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using TwentyTwenty.Mvc.DataTables.Core;
 
 namespace TwentyTwenty.Mvc.DataTables
@@ -103,37 +99,30 @@ namespace TwentyTwenty.Mvc.DataTables
             response.ContentType = "application/json";
             response.StatusCode = (int)HttpStatusCode.OK;
 
-            using (var writer = new HttpResponseStreamWriter(response.Body, Encoding.UTF8))
-            using (var jsonWriter = new JsonTextWriter(writer))
+            using (var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter, new JsonWriterOptions { Indented = true }))
             {
-                jsonWriter.CloseOutput = false;
-
                 // Start json object.
                 jsonWriter.WriteStartObject();
 
                 // Draw
-                jsonWriter.WritePropertyName(ResponseNames.Draw, true);
-                jsonWriter.WriteValue(Draw);
+                jsonWriter.WriteNumber(ResponseNames.Draw, Draw);
 
                 if (IsSuccessResponse())
                 {
                     // TotalRecords
-                    jsonWriter.WritePropertyName(ResponseNames.TotalRecords, true);
-                    jsonWriter.WriteValue(TotalRecords);
+                    jsonWriter.WriteNumber(ResponseNames.TotalRecords, TotalRecords);
 
                     // TotalRecordsFiltered
-                    jsonWriter.WritePropertyName(ResponseNames.TotalRecordsFiltered, true);
-                    jsonWriter.WriteValue(TotalRecordsFiltered);
+                    jsonWriter.WriteNumber(ResponseNames.TotalRecordsFiltered, TotalRecordsFiltered);
 
                     // Data
-                    jsonWriter.WritePropertyName(ResponseNames.Data, true);
-                    SerializeData(jsonWriter, Data);
+                    jsonWriter.WritePropertyName(ResponseNames.Data);
+                    System.Text.Json.JsonSerializer.Serialize(jsonWriter, Data, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
                 }
                 else
                 {
                     // Error
-                    jsonWriter.WritePropertyName(ResponseNames.Error, true);
-                    jsonWriter.WriteValue(Error);
+                    jsonWriter.WriteString(ResponseNames.Error, Error);
                 }
 
                 // AdditionalParameters
@@ -141,8 +130,8 @@ namespace TwentyTwenty.Mvc.DataTables
                 {
                     foreach(var keypair in AdditionalParameters)
                     {
-                        jsonWriter.WritePropertyName(keypair.Key, true);
-                        jsonWriter.WriteValue(keypair.Value);
+                        jsonWriter.WritePropertyName(keypair.Key);
+                        System.Text.Json.JsonSerializer.Serialize(jsonWriter, keypair.Value, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
                     }
                 }
 
@@ -161,27 +150,6 @@ namespace TwentyTwenty.Mvc.DataTables
         private bool IsSuccessResponse()
         {
             return Data != null && string.IsNullOrWhiteSpace(Error);
-        }
-        /// <summary>
-        /// Transforms a data object into a json element using Json.Net library.
-        /// Can be overriten when needed.
-        /// 
-        /// Data will be serialized with camelCase convention by default, since it's a JavaScript standard.
-        /// This should not interfere with DataTables' CamelCase X HungarianNotation issue.
-        /// </summary>
-        /// <param name="data">Data object to be transformed to json.</param>
-        /// <returns>A json representation of your data.</returns>
-        public virtual void SerializeData(JsonTextWriter writer, object data)
-        {
-            var settings = new JsonSerializerSettings() 
-            { 
-                ContractResolver = new CamelCasePropertyNamesContractResolver() 
-            };
-
-            var serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
-            
-            
-            serializer.Serialize(writer, data);
         }
 
         /// <summary>
