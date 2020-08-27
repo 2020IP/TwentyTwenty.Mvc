@@ -30,7 +30,11 @@ namespace TwentyTwenty.Mvc.Version
 
             context.Response.OnStarting(() =>
             {
-                context.Response.Headers.Add(_options.Header, new[] { version });
+                if (!context.Response.Headers.ContainsKey(_options.Header))
+                {
+                    context.Response.Headers.Add(_options.Header, new[] { version });
+                }
+                
                 return Task.CompletedTask;
             });
 
