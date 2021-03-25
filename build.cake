@@ -26,11 +26,9 @@ Task("Version")
 Task("Restore")
     .IsDependentOn("Version")
     .Does(() => {
-        // Workaround for bad tooling.  See https://github.com/NuGet/Home/issues/4337
-        var props = "-p:VersionPrefix=" + versionInfo.MajorMinorPatch + " -p:VersionSuffix=" + versionInfo.PreReleaseLabel + versionInfo.PreReleaseNumber;
         DotNetCoreRestore(new DotNetCoreRestoreSettings
         {
-            ArgumentCustomization = args => args.Append(props)
+            ArgumentCustomization = args => args.Append("/p:SemVer=" + versionInfo.NuGetVersion)
         });
     });
 
@@ -41,8 +39,7 @@ Task("Build")
         DotNetCoreBuild(".", new DotNetCoreBuildSettings
         {
             Configuration = configuration,
-            VersionSuffix = versionInfo.PreReleaseLabel + versionInfo.PreReleaseNumber,
-            ArgumentCustomization = args => args.Append("-p:VersionPrefix=" + versionInfo.MajorMinorPatch),
+            ArgumentCustomization = args => args.Append("/p:SemVer=" + versionInfo.NuGetVersion)
         });
     });
 
@@ -54,16 +51,14 @@ Task("Package")
             OutputDirectory = outputDir,
             NoBuild = true,
             Configuration = configuration,
-            VersionSuffix = versionInfo.PreReleaseLabel + versionInfo.PreReleaseNumber,
-            ArgumentCustomization = args => args.Append("-p:VersionPrefix=" + versionInfo.MajorMinorPatch),
+            ArgumentCustomization = args => args.Append("/p:SemVer=" + versionInfo.NuGetVersion)
         };
 
         DotNetCorePack("src/TwentyTwenty.Mvc/", settings);
 
-        System.IO.File.WriteAllLines(outputDir + "artifacts", new[]{
+        System.IO.File.WriteAllLines(outputDir + "artifacts", new [] {
             "nuget:TwentyTwenty.Mvc." + versionInfo.NuGetVersion + ".nupkg",
             "nugetSymbols:TwentyTwenty.Mvc." + versionInfo.NuGetVersion + ".symbols.nupkg",
-        //    "releaseNotes:releasenotes.md"
         });
 
         if (AppVeyor.IsRunningOnAppVeyor)
@@ -75,15 +70,5 @@ Task("Package")
 
 Task("Default")
     .IsDependentOn("Package");
-
-private void GenerateReleaseNotes()
-{
-    var settings = new GitReleaseNotesSettings
-    {
-        WorkingDirectory = ".",        
-    };
-
-    GitReleaseNotes("./artifacts/releasenotes.md", settings);
-}
 
 RunTarget(target);
