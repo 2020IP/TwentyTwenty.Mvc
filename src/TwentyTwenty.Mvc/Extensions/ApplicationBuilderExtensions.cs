@@ -5,6 +5,7 @@ using TwentyTwenty.Mvc.Correlation;
 using TwentyTwenty.Mvc.ErrorHandling;
 using TwentyTwenty.Mvc.HealthCheck;
 using TwentyTwenty.Mvc.ReadOnlyMode;
+using TwentyTwenty.Mvc.TokenBlacklist;
 using TwentyTwenty.Mvc.Version;
 
 namespace Microsoft.AspNetCore.Builder
@@ -141,6 +142,21 @@ namespace Microsoft.AspNetCore.Builder
             }
 
             return app.UseMiddleware<CorrelationIdMiddleware>(Options.Create(options));
+        }
+
+        public static IApplicationBuilder UseBearerTokenBlacklist(this IApplicationBuilder app, BearerTokenBlacklistOptions options)
+        {
+            if (app == null)
+            {
+                throw new ArgumentNullException(nameof(app));
+            }
+
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            return app.UseMiddleware<BearerTokenBlacklistMiddleware>(Options.Create(options));
         }
     }
 }
