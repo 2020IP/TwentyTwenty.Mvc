@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyTitle>20|20 MVC</AssemblyTitle>
     <Authors>Jarrod Alexander, Eric Green</Authors>
-    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <DebugType>portable</DebugType>
     <AssemblyName>TwentyTwenty.Mvc</AssemblyName>
     <PackageId>TwentyTwenty.Mvc</PackageId>
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TwentyTwenty.BaseLine" Version="1.0.0" />
+    <PackageReference Include="TwentyTwenty.BaseLine" Version="1.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 

@@ -1,5 +1,4 @@
 using System;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using TwentyTwenty.Mvc;
 using TwentyTwenty.Mvc.Correlation;
