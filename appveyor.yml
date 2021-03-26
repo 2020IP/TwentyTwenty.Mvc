@@ -7,7 +7,7 @@ before_build:
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
   - cmd: dotnet restore ./src/TwentyTwenty.Mvc/TwentyTwenty.Mvc.csproj
 build_script:
-  - cmd: dotnet pack ./src/TwentyTwenty.Mvc/TwentyTwenty.Mvc.csproj --no-restore -c Release /p:SemVer=%GitVersion_NuGetVersion%
+  - cmd: dotnet pack ./src/TwentyTwenty.Mvc/TwentyTwenty.Mvc.csproj --no-restore -c Release -p:PackageVersion=%GitVersion_NuGetVersion%
 test: off
 artifacts:
   - path: '**\*.nupkg'
@@ -20,7 +20,7 @@ deploy:
       appveyor_repo_tag: true
 
   - provider: GitHub
-    release: v$(GitVersion_SemVer)
+    release: "%GitVersion_NuGetVersion%"
     description: 'TwentyTwenty.Mvc'
     auth_token:
       secure: fd/+7iqe48Pb5+TSjRLgl4uEP4FvKjAv8xs0MI+cgYPJ3QX2/cBdfJt2E6fbwHFr
