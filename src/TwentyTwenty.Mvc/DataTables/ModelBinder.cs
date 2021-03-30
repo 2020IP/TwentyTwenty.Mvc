@@ -186,7 +186,7 @@ namespace TwentyTwenty.Mvc.DataTables
         {
             result = default(T);
 
-            if (value == null) return false;
+            if (value == ValueProviderResult.None) return false;
             if (string.IsNullOrWhiteSpace(value.FirstValue)) return false;
 
             try
