@@ -3,8 +3,7 @@
   <PropertyGroup>
     <AssemblyTitle>20|20 MVC</AssemblyTitle>
     <Authors>Jarrod Alexander, Eric Green</Authors>
-    <TargetFrameworks>netcoreapp5.0</TargetFrameworks>
-    <DebugType>portable</DebugType>
+    <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>TwentyTwenty.Mvc</AssemblyName>
     <PackageId>TwentyTwenty.Mvc</PackageId>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/15891935?v=3&amp;s=64</PackageIconUrl>
