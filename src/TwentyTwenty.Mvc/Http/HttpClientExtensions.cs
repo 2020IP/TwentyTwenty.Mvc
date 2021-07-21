@@ -1,6 +1,6 @@
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace TwentyTwenty.Mvc.Http
 {
@@ -10,7 +10,7 @@ namespace TwentyTwenty.Mvc.Http
         {
             var responseString = await msg.Content.ReadAsStringAsync();
 
-            return responseString == null ? default(TResponse) : JsonConvert.DeserializeObject<TResponse>(responseString);
+            return responseString == null ? default(TResponse) : JsonSerializer.Deserialize<TResponse>(responseString);
         }
     }
 }
