@@ -6,8 +6,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using Newtonsoft.Json;
 using TwentyTwenty.BaseLine;
+using System.Text.Json;
 
 namespace TwentyTwenty.Mvc.ErrorHandling
 {
@@ -81,7 +81,7 @@ namespace TwentyTwenty.Mvc.ErrorHandling
                             errorResponse.Details = GetDetails(ex, context);
                         }
 
-                        var json = JsonConvert.SerializeObject(errorResponse);
+                        var json = JsonSerializer.Serialize(errorResponse);
                         await context.Response.WriteAsync(json);
                     }
                     else

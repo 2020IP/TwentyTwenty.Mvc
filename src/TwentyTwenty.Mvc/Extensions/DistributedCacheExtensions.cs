@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Microsoft.Extensions.Caching.Distributed
 {
@@ -10,12 +9,12 @@ namespace Microsoft.Extensions.Caching.Distributed
     {
         public static Task SetObjectAsync(this IDistributedCache cache, string key, object obj)
         {
-            return cache.SetAsync(key, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj)));
+            return cache.SetAsync(key, Encoding.UTF8.GetBytes(JsonSerializer.Serialize(obj)));
         }
 
         public static void SetObject(this IDistributedCache cache, string key, object obj)
         {
-            cache.Set(key, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(obj)));
+            cache.Set(key, Encoding.UTF8.GetBytes(JsonSerializer.Serialize(obj)));
         }
 
         public static async Task<T> GetObjectAsync<T>(this IDistributedCache cache, string key) where T : class
@@ -24,7 +23,7 @@ namespace Microsoft.Extensions.Caching.Distributed
 
             if (bytes == null) return null;
 
-            return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(bytes));
+            return JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(bytes));
         }
 
         public static T GetObject<T>(this IDistributedCache cache, string key) where T : class
@@ -33,7 +32,7 @@ namespace Microsoft.Extensions.Caching.Distributed
 
             if (bytes == null) return null;
 
-            return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(bytes));
+            return JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(bytes));
         }
 
         public static async Task<object> GetObjectAsync(this IDistributedCache cache, string key)
@@ -42,7 +41,7 @@ namespace Microsoft.Extensions.Caching.Distributed
 
             if (bytes == null) return null;
 
-            return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(bytes));
+            return JsonSerializer.Deserialize<object>(Encoding.UTF8.GetString(bytes));
         }
 
         public static object GetObject(this IDistributedCache cache, string key)
@@ -51,7 +50,7 @@ namespace Microsoft.Extensions.Caching.Distributed
 
             if (bytes == null) return null;
 
-            return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(bytes));
+            return JsonSerializer.Deserialize<object>(Encoding.UTF8.GetString(bytes));
         }
 
         public static async Task AddObjectToHashSetAsync<T>(this IDistributedCache cache, string key, T obj) where T : class
