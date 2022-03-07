@@ -18,6 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="../../lib/AspNetCore/src/Shared/StackTrace/**/*.cs" />
+    <Compile Include="../../lib/AspNetCore/src/Shared/TypeNameHelper/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
