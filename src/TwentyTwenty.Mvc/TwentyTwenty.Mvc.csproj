@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TwentyTwenty.BaseLine" Version="1.4.1" />
+    <PackageReference Include="TwentyTwenty.BaseLine" Version="1.4.3" />
   </ItemGroup>
 
   <ItemGroup>
