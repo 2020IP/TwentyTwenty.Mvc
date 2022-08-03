@@ -37,12 +37,7 @@ namespace TwentyTwenty.Mvc
         public FileCallbackResult(MediaTypeHeaderValue contentType, Func<Stream, ActionContext, Task> callback)
             : base(contentType?.ToString())
         {
-            if (callback == null)
-            {
-                throw new ArgumentNullException(nameof(callback));
-            }
-
-            Callback = callback;
+            Callback = callback ?? throw new ArgumentNullException(nameof(callback));
         }
 
         /// <summary>
@@ -53,12 +48,7 @@ namespace TwentyTwenty.Mvc
             get { return _callback; }
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-
-                _callback = value;
+                _callback = value ?? throw new ArgumentNullException(nameof(value));
             }
         }
 

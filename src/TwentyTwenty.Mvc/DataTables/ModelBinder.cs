@@ -57,8 +57,7 @@ namespace TwentyTwenty.Mvc.DataTables
             int start = Parse<int>(startVal);
 
             var lengthVal = values.GetValue(RequestNames.Length);
-            int length;
-            if (!TryParse<int>(lengthVal, out length))
+            if (!TryParse<int>(lengthVal, out int length))
             {
                 length = options.DefaultPageLength;
             }
@@ -73,7 +72,7 @@ namespace TwentyTwenty.Mvc.DataTables
 
             // Parse columns & column sorting.
             var columns = ParseColumns(values).ToList();
-            var sorting = ParseSorting(columns, values).ToList();
+            // var sorting = ParseSorting(columns, values).ToList();
 
             if (parseAditionalParameters != null)
             {
@@ -112,8 +111,8 @@ namespace TwentyTwenty.Mvc.DataTables
             {
                 // Parses Field value.
                 var columnFieldVal = values.GetValue(string.Format(RequestNames.ColumnField, i));
-                string columnField;
-                if (!TryParse<string>(columnFieldVal, out columnField))
+
+                if (!TryParse<string>(columnFieldVal, out string columnField))
                 {
                     break;
                 }
@@ -157,8 +156,8 @@ namespace TwentyTwenty.Mvc.DataTables
             for (int i = 0; i < columns.Count; i++)
             {
                 var sortFieldVal = values.GetValue(string.Format(RequestNames.SortField, i));
-                int sortField;
-                if (!TryParse<int>(sortFieldVal, out sortField))
+
+                if (!TryParse<int>(sortFieldVal, out int sortField))
                 {
                     break;
                 }
@@ -184,7 +183,7 @@ namespace TwentyTwenty.Mvc.DataTables
         /// <returns>True if parsing succeeded, False otherwise.</returns>
         private static bool TryParse<T>(ValueProviderResult value, out T result)
         {
-            result = default(T);
+            result = default;
 
             if (value == ValueProviderResult.None) return false;
             if (string.IsNullOrWhiteSpace(value.FirstValue)) return false;
@@ -199,8 +198,7 @@ namespace TwentyTwenty.Mvc.DataTables
 
         private static T Parse<T>(ValueProviderResult value)
         {
-            T val;
-            TryParse<T>(value, out val);
+            TryParse<T>(value, out T val);
             return val;
         }
     }

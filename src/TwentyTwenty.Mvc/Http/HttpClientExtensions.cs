@@ -10,7 +10,7 @@ namespace TwentyTwenty.Mvc.Http
         {
             var responseString = await msg.Content.ReadAsStringAsync();
 
-            return responseString == null ? default(TResponse) : JsonSerializer.Deserialize<TResponse>(responseString);
+            return responseString == null ? default : JsonSerializer.Deserialize<TResponse>(responseString);
         }
     }
 }

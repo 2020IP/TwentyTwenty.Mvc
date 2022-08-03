@@ -14,9 +14,9 @@ namespace TwentyTwenty.Mvc
 {
     public class RazorRenderer
     {
-        private IRazorViewEngine _viewEngine;
-        private ITempDataProvider _tempDataProvider;
-        private IServiceProvider _serviceProvider;
+        private readonly IRazorViewEngine _viewEngine;
+        private readonly ITempDataProvider _tempDataProvider;
+        private readonly IServiceProvider _serviceProvider;
 
         public RazorRenderer(
             IRazorViewEngine viewEngine,
@@ -41,33 +41,34 @@ namespace TwentyTwenty.Mvc
 
             var view = viewEngineResult.View;
 
-            using (var output = new StringWriter())
-            {
-                var viewContext = new ViewContext(
-                    actionContext,
-                    view,
-                    new ViewDataDictionary<TModel>(
-                        metadataProvider: new EmptyModelMetadataProvider(),
-                        modelState: new ModelStateDictionary())
-                    {
-                        Model = model
-                    },
-                    new TempDataDictionary(
-                        actionContext.HttpContext,
-                        _tempDataProvider),
-                    output,
-                    new HtmlHelperOptions());
+            using var output = new StringWriter();
+            var viewContext = new ViewContext(
+                actionContext,
+                view,
+                new ViewDataDictionary<TModel>(
+                    metadataProvider: new EmptyModelMetadataProvider(),
+                    modelState: new ModelStateDictionary())
+                {
+                    Model = model
+                },
+                new TempDataDictionary(
+                    actionContext.HttpContext,
+                    _tempDataProvider),
+                output,
+                new HtmlHelperOptions());
 
-                await view.RenderAsync(viewContext);
+            await view.RenderAsync(viewContext);
 
-                return output.ToString();
-            }
+            return output.ToString();
         }
 
         private ActionContext GetActionContext()
         {
-            var httpContext = new DefaultHttpContext();
-            httpContext.RequestServices = _serviceProvider;
+            var httpContext = new DefaultHttpContext
+            {
+                RequestServices = _serviceProvider
+            };
+
             return new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
         }
     }

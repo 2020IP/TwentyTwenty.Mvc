@@ -101,7 +101,7 @@ namespace TwentyTwenty.Mvc.ErrorHandling
             }
         }
 
-        private ErrorDetails GetDetails(Exception ex, HttpContext context)
+        private static ErrorDetails GetDetails(Exception ex, HttpContext context)
         {
             return new ErrorDetails
             {

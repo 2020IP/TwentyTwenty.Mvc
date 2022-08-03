@@ -18,7 +18,7 @@ namespace TwentyTwenty.Mvc
             var perPage = request.Query.GetInt("pageSize");
             perPage = perPage == 0 ? 100 : perPage;
 
-            return perPage.HasValue ? perPage.Value : 100;
+            return perPage ?? 100;
         }
 
         public static SortSpec GetSortSpec(this HttpRequest request)

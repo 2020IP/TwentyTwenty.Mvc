@@ -40,7 +40,7 @@ namespace TwentyTwenty.Mvc.DataTables
         /// </summary>
         public IDictionary<string, object> AdditionalParameters { get; protected set; }
 
-        private JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         
         public override async Task ExecuteResultAsync(ActionContext context)
         {
@@ -50,47 +50,45 @@ namespace TwentyTwenty.Mvc.DataTables
             response.ContentType = "application/json";
             response.StatusCode = (int)HttpStatusCode.OK;
 
-            await using (var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter))
+            await using var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter);
+            // Start json object.
+            jsonWriter.WriteStartObject();
+
+            // Draw
+            jsonWriter.WriteNumber(ResponseNames.Draw, Draw);
+
+            if (IsSuccessResponse())
             {
-                // Start json object.
-                jsonWriter.WriteStartObject();
+                // TotalRecords
+                jsonWriter.WriteNumber(ResponseNames.TotalRecords, TotalRecords);
 
-                // Draw
-                jsonWriter.WriteNumber(ResponseNames.Draw, Draw);
+                // TotalRecordsFiltered
+                jsonWriter.WriteNumber(ResponseNames.TotalRecordsFiltered, TotalRecordsFiltered);
 
-                if (IsSuccessResponse())
-                {
-                    // TotalRecords
-                    jsonWriter.WriteNumber(ResponseNames.TotalRecords, TotalRecords);
-
-                    // TotalRecordsFiltered
-                    jsonWriter.WriteNumber(ResponseNames.TotalRecordsFiltered, TotalRecordsFiltered);
-
-                    // Data
-                    jsonWriter.WritePropertyName(ResponseNames.Data);
-                    JsonSerializer.Serialize(jsonWriter, Data, _jsonOptions);
-                }
-                else
-                {
-                    // Error
-                    jsonWriter.WriteString(ResponseNames.Error, Error);
-                }
-
-                // AdditionalParameters
-                if (options.Value.IsResponseAdditionalParametersEnabled && AdditionalParameters != null)
-                {
-                    foreach(var keypair in AdditionalParameters)
-                    {
-                        jsonWriter.WritePropertyName(keypair.Key);
-                        JsonSerializer.Serialize(jsonWriter, keypair.Value, _jsonOptions);
-                    }
-                }
-
-                // End json object
-                jsonWriter.WriteEndObject();
-
-                await jsonWriter.FlushAsync();
+                // Data
+                jsonWriter.WritePropertyName(ResponseNames.Data);
+                JsonSerializer.Serialize(jsonWriter, Data, _jsonOptions);
             }
+            else
+            {
+                // Error
+                jsonWriter.WriteString(ResponseNames.Error, Error);
+            }
+
+            // AdditionalParameters
+            if (options.Value.IsResponseAdditionalParametersEnabled && AdditionalParameters != null)
+            {
+                foreach (var keypair in AdditionalParameters)
+                {
+                    jsonWriter.WritePropertyName(keypair.Key);
+                    JsonSerializer.Serialize(jsonWriter, keypair.Value, _jsonOptions);
+                }
+            }
+
+            // End json object
+            jsonWriter.WriteEndObject();
+
+            await jsonWriter.FlushAsync();
         }
 
         public override void ExecuteResult(ActionContext context)
@@ -101,47 +99,45 @@ namespace TwentyTwenty.Mvc.DataTables
             response.ContentType = "application/json";
             response.StatusCode = (int)HttpStatusCode.OK;
 
-            using (var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter))
+            using var jsonWriter = new Utf8JsonWriter(context.HttpContext.Response.BodyWriter);
+            // Start json object.
+            jsonWriter.WriteStartObject();
+
+            // Draw
+            jsonWriter.WriteNumber(ResponseNames.Draw, Draw);
+
+            if (IsSuccessResponse())
             {
-                // Start json object.
-                jsonWriter.WriteStartObject();
+                // TotalRecords
+                jsonWriter.WriteNumber(ResponseNames.TotalRecords, TotalRecords);
 
-                // Draw
-                jsonWriter.WriteNumber(ResponseNames.Draw, Draw);
+                // TotalRecordsFiltered
+                jsonWriter.WriteNumber(ResponseNames.TotalRecordsFiltered, TotalRecordsFiltered);
 
-                if (IsSuccessResponse())
-                {
-                    // TotalRecords
-                    jsonWriter.WriteNumber(ResponseNames.TotalRecords, TotalRecords);
-
-                    // TotalRecordsFiltered
-                    jsonWriter.WriteNumber(ResponseNames.TotalRecordsFiltered, TotalRecordsFiltered);
-
-                    // Data
-                    jsonWriter.WritePropertyName(ResponseNames.Data);
-                    JsonSerializer.Serialize(jsonWriter, Data, _jsonOptions);
-                }
-                else
-                {
-                    // Error
-                    jsonWriter.WriteString(ResponseNames.Error, Error);
-                }
-
-                // AdditionalParameters
-                if (options.Value.IsResponseAdditionalParametersEnabled && AdditionalParameters != null)
-                {
-                    foreach(var keypair in AdditionalParameters)
-                    {
-                        jsonWriter.WritePropertyName(keypair.Key);
-                        JsonSerializer.Serialize(jsonWriter, keypair.Value, _jsonOptions);
-                    }
-                }
-
-                // End json object
-                jsonWriter.WriteEndObject();
-
-                jsonWriter.Flush();
+                // Data
+                jsonWriter.WritePropertyName(ResponseNames.Data);
+                JsonSerializer.Serialize(jsonWriter, Data, _jsonOptions);
             }
+            else
+            {
+                // Error
+                jsonWriter.WriteString(ResponseNames.Error, Error);
+            }
+
+            // AdditionalParameters
+            if (options.Value.IsResponseAdditionalParametersEnabled && AdditionalParameters != null)
+            {
+                foreach (var keypair in AdditionalParameters)
+                {
+                    jsonWriter.WritePropertyName(keypair.Key);
+                    JsonSerializer.Serialize(jsonWriter, keypair.Value, _jsonOptions);
+                }
+            }
+
+            // End json object
+            jsonWriter.WriteEndObject();
+
+            jsonWriter.Flush();
         }        
         
         /// <summary>

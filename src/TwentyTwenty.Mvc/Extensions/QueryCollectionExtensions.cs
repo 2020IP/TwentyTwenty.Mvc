@@ -8,27 +8,23 @@ namespace Microsoft.AspNetCore.Http
     {
         public static int? ToInt(this string param)
         {
-            int parsed;
-            return int.TryParse(param, out parsed) ? parsed : (int?)null;
+            return int.TryParse(param, out int parsed) ? parsed : (int?)null;
         }
 
         public static decimal? ToDecimal(this string param)
         {
-            decimal parsed;
-            return decimal.TryParse(param, out parsed) ? parsed : (decimal?)null;
+            return decimal.TryParse(param, out decimal parsed) ? parsed : (decimal?)null;
         }
 
         public static T? ToEnum<T>(this string param)
             where T : struct
         {
-            T parsed;
-            return Enum.TryParse<T>(param, true, out parsed) ? parsed : (T?)null;
+            return Enum.TryParse<T>(param, true, out T parsed) ? parsed : (T?)null;
         }
 
         public static bool? ToBool(this string param)
         {
-            bool parsed;
-            if (bool.TryParse(param, out parsed))
+            if (bool.TryParse(param, out bool parsed))
             {
                 return parsed;
             }
@@ -61,8 +57,7 @@ namespace Microsoft.AspNetCore.Http
 
         public static StringValues? GetValues(this IQueryCollection query, string key)
         {
-            StringValues val;
-            if (!query.TryGetValue(key, out val))
+            if (!query.TryGetValue(key, out StringValues val))
             {
                 return null;
             }

@@ -20,27 +20,25 @@ namespace TwentyTwenty.Mvc.Filters
             var response = context.HttpContext.Response;
             var originalStream = response.Body;
 
-            using (var ms = new MemoryStream())
+            using var ms = new MemoryStream();
+            response.Body = ms;
+            await next();
+
+            if (IsEtagSupported(response))
             {
-                response.Body = ms;
-                await next();
+                string checksum = CalculateChecksum(ms);
 
-                if (IsEtagSupported(response))
+                response.Headers[HeaderNames.ETag] = checksum;
+
+                if (context.HttpContext.Request.Headers.TryGetValue(HeaderNames.IfNoneMatch, out var etag) && checksum == etag)
                 {
-                    string checksum = CalculateChecksum(ms);
-
-                    response.Headers[HeaderNames.ETag] = checksum;
-
-                    if (context.HttpContext.Request.Headers.TryGetValue(HeaderNames.IfNoneMatch, out var etag) && checksum == etag)
-                    {
-                        response.StatusCode = StatusCodes.Status304NotModified;
-                        return;
-                    }
+                    response.StatusCode = StatusCodes.Status304NotModified;
+                    return;
                 }
-
-                ms.Position = 0;
-                await ms.CopyToAsync(originalStream);
             }
+
+            ms.Position = 0;
+            await ms.CopyToAsync(originalStream);
         }
 
         private static bool IsEtagSupported(HttpResponse response)

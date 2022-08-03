@@ -4,7 +4,7 @@ namespace TwentyTwenty.Mvc.SecurityHeaders
 {
     public class SecurityHeadersBuilder
     {
-        private readonly SecurityHeadersPolicy _policy = new SecurityHeadersPolicy();
+        private readonly SecurityHeadersPolicy _policy = new();
 
         public SecurityHeadersBuilder AddDefaultSecurePolicy()
         {

@@ -46,7 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         internal class ModelBinderProvider : IModelBinderProvider
         {
-            private IModelBinder _modelBinder;
+            private readonly IModelBinder _modelBinder;
             
             public ModelBinderProvider(IModelBinder modelBinder)
             { 
