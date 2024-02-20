@@ -10,13 +10,10 @@ namespace TwentyTwenty.Mvc.Correlation
     {
         private readonly RequestDelegate _next;
         private readonly CorrelationIdOptions _options;
-        
+
         public CorrelationIdMiddleware(RequestDelegate next, IOptions<CorrelationIdOptions> options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
 
             _next = next ?? throw new ArgumentNullException(nameof(next));
 
@@ -37,9 +34,9 @@ namespace TwentyTwenty.Mvc.Correlation
                 {
                     if (!context.Response.Headers.ContainsKey(_options.Header))
                     {
-                        context.Response.Headers.Add(_options.Header, new[] { context.TraceIdentifier });
+                        context.Response.Headers.Append(_options.Header, new[] { context.TraceIdentifier });
                     }
-                    
+
                     return Task.CompletedTask;
                 });
             }

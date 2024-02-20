@@ -22,10 +22,7 @@ namespace TwentyTwenty.Mvc.ErrorHandling
 
         public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger, IHostEnvironment env, IOptions<ErrorHandlerOptions> options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
 
             _next = next;
             _logger = logger;

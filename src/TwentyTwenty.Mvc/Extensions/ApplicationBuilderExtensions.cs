@@ -17,10 +17,7 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseErrorHandling(this IApplicationBuilder app, Func<int, int> codeMap = null)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
+            ArgumentNullException.ThrowIfNull(app);
 
             return app.UseErrorHandling(new ErrorHandlerOptions
             {
@@ -30,15 +27,8 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseErrorHandling(this IApplicationBuilder app, ErrorHandlerOptions options)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
-
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(app);
+            ArgumentNullException.ThrowIfNull(options);
 
             return app.UseMiddleware<ErrorHandlerMiddleware>(Options.Create(options));
         }
@@ -48,10 +38,7 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseHealthCheck(this IApplicationBuilder app, string path)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
+            ArgumentNullException.ThrowIfNull(app);
 
             return app.Map(path, builder =>
             {
@@ -61,30 +48,21 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseReadOnlyMode(this IApplicationBuilder app)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
+            ArgumentNullException.ThrowIfNull(app);
 
             return app.UseMiddleware<ReadOnlyModeMiddleware>();
         }
 
         public static IApplicationBuilder UseVersionHeader(this IApplicationBuilder app)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
+            ArgumentNullException.ThrowIfNull(app);
 
             return app.UseMiddleware<VersionHeaderMiddleware>();
         }
 
         public static IApplicationBuilder UseVersionHeader(this IApplicationBuilder app, string header)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
+            ArgumentNullException.ThrowIfNull(app);
 
             return app.UseVersionHeader(new VersionOptions
             {
@@ -94,35 +72,22 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseVersionHeader(this IApplicationBuilder app, VersionOptions options)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
-
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(app);
+            ArgumentNullException.ThrowIfNull(options);
 
             return app.UseMiddleware<VersionHeaderMiddleware>(Options.Create(options));
         }
 
         public static IApplicationBuilder UseCorrelationId(this IApplicationBuilder app)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
+            ArgumentNullException.ThrowIfNull(app);
 
             return app.UseMiddleware<CorrelationIdMiddleware>();
         }
 
         public static IApplicationBuilder UseCorrelationId(this IApplicationBuilder app, string header)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
+            ArgumentNullException.ThrowIfNull(app);
 
             return app.UseCorrelationId(new CorrelationIdOptions
             {
@@ -132,29 +97,15 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseCorrelationId(this IApplicationBuilder app, CorrelationIdOptions options)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
+            ArgumentNullException.ThrowIfNull(app);
+            ArgumentNullException.ThrowIfNull(options);
             return app.UseMiddleware<CorrelationIdMiddleware>(Options.Create(options));
         }
 
         public static IApplicationBuilder UseBearerTokenBlacklist(this IApplicationBuilder app, BearerTokenBlacklistOptions options)
         {
-            if (app == null)
-            {
-                throw new ArgumentNullException(nameof(app));
-            }
-
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(app);
+            ArgumentNullException.ThrowIfNull(options);
 
             return app.UseMiddleware<BearerTokenBlacklistMiddleware>(Options.Create(options));
         }

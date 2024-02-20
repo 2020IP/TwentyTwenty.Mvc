@@ -1,7 +1,7 @@
 version: 1.0.{build}
-image: Visual Studio 2019
+image: Visual Studio 2022
 install:
-  - choco install gitversion.portable -pre -y
+  - choco install gitversion.portable
 before_build:
   - cmd: dotnet --version
   - ps: gitversion /l console /output buildserver /updateAssemblyInfo
@@ -14,7 +14,7 @@ artifacts:
 deploy:
   - provider: NuGet
     api_key:
-      secure: hMPnTN277BiN+kPg5JsdoAlSFIV1XveuzU5Yo/+w0NaZ8fwyY6fC9pIYyXvCVVrz
+      secure: 9LiiCtcE3GJ04Z/jp8PzfQxBC9sluCHrRqRX5HQ1tOFdsXDeIn52NKoh+zOhJPcv
     artifact: /.*\.nupkg/
     on:
       appveyor_repo_tag: true
@@ -23,7 +23,7 @@ deploy:
     release: "%GitVersion_NuGetVersion%"
     description: 'TwentyTwenty.Mvc'
     auth_token:
-      secure: fd/+7iqe48Pb5+TSjRLgl4uEP4FvKjAv8xs0MI+cgYPJ3QX2/cBdfJt2E6fbwHFr
+      secure: jRySGaPcL/02436nnSFXkVrbKAZHK/lt+djaz2TBts8InPudWVPYY/rqWeSVe3LJGdGXEUV7bBgGbRazdD/UxV2HvB/Gm+Pqzxx4NQA2MvFf8AjqnM0U2KBcitL1Ao1O
     artifact: /.*\.nupkg/
     draft: true
     on:    

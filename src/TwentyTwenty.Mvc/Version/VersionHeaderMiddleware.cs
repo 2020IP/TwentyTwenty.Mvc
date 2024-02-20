@@ -13,10 +13,7 @@ namespace TwentyTwenty.Mvc.Version
 
         public VersionHeaderMiddleware(RequestDelegate next, IVersionProvider versionProvider, IOptions<VersionOptions> options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
+            ArgumentNullException.ThrowIfNull(options);
 
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _versionProvider = versionProvider ?? throw new ArgumentNullException(nameof(versionProvider));
@@ -32,7 +29,7 @@ namespace TwentyTwenty.Mvc.Version
             {
                 if (!context.Response.Headers.ContainsKey(_options.Header))
                 {
-                    context.Response.Headers.Add(_options.Header, new[] { version });
+                    context.Response.Headers.Append(_options.Header, new[] { version });
                 }
                 
                 return Task.CompletedTask;
