@@ -1,6 +1,7 @@
 version: 1.0.{build}
 image: Visual Studio 2022
 install:
+  - ps: Invoke-WebRequest 'https://dot.net/v1/dotnet-install.ps1' -OutFile dotnet-install.ps1; ./dotnet-install.ps1 -Channel 10.0 -InstallDir 'C:\Program Files\dotnet'
   - dotnet tool install --global GitVersion.Tool
 before_build:
   - cmd: dotnet --version
