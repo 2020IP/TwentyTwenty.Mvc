@@ -9,7 +9,8 @@ before_build:
   - cmd: dotnet restore ./src/TwentyTwenty.Mvc/TwentyTwenty.Mvc.csproj
 build_script:
   - cmd: dotnet pack ./src/TwentyTwenty.Mvc/TwentyTwenty.Mvc.csproj --no-restore -c Release -p:PackageVersion=%GitVersion_MajorMinorPatch%
-test: off
+test_script:
+  - cmd: dotnet test ./test/TwentyTwenty.Mvc.Tests/TwentyTwenty.Mvc.Tests.csproj -c Release
 artifacts:
   - path: '**\*.nupkg'
 deploy:
