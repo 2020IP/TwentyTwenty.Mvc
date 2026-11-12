@@ -43,6 +43,19 @@ Running locally needs no change. Requests from loopback keep `127.0.0.1`, and yo
 
 To use `CF-Connecting-IP`, restrict the load balancer's inbound rules to [Cloudflare's IP ranges](https://www.cloudflare.com/ips/). If you ever turn the Cloudflare proxy off, open the load balancer and switch `ClientIpHeader` to `X-Forwarded-For` together. Between the two changes, users can briefly share edge addresses, or direct callers can briefly choose their IP, depending on the order.
 
+### Keeping the raw X-Forwarded-For
+
+`UseForwardedHeaders()` removes the entries it consumes from `X-Forwarded-For` when that is the configured header. To keep the header exactly as it arrived, for logging or investigation, capture it first:
+
+```csharp
+app.UseRawForwardedForCapture();
+app.UseForwardedHeaders();
+```
+
+Then read it anywhere in the request with `RawForwardedFor.Get(HttpContext)` (an empty string if there was none). The value is kept in `HttpContext.Items`, so a client can't plant it through a request header. It is still client input: the left-hand entries are whatever the client sent. Use `RemoteIpAddress` for the client IP and this only as a record.
+
+With an edge header such as `CF-Connecting-IP` configured, `X-Forwarded-For` isn't touched and can also be read from `Request.Headers` directly. The capture gives the same value whichever header is configured.
+
 ### Upgrading from 2.x
 
 3.0 removes `HttpContext.SetRemoteIpAddressToForwardedFor()`. It set the remote IP to the first `X-Forwarded-For` entry, which the client writes, so any client could choose the IP an app logged or recorded. To upgrade:
